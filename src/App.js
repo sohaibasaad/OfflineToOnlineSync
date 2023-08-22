@@ -31,13 +31,14 @@ import Dexie from 'dexie';
 
 const db = new Dexie('OfflineToOnlineSync');
 db.version(1).stores({
-  offlineData: '++id, data, status', // status: unsynchronized, pending, synchronized
+  offlineData: '++id, data, receiptId, status', // status: unsynchronized, pending, synchronized
   // onlineDatabase: '++id, data, status' // Adding new table to database
 });
 
 
 function App() {
-  const [online, setOnline] = useState(window.navigator.onLine);
+  // const [online, setOnline] = useState(window.navigator.onLine);
+  const [online, setOnline] = useState(false);
 
   useEffect(() => {
     window.addEventListener('online', handleOnline);
@@ -86,6 +87,7 @@ function App() {
             //If API returns success
             if (response.status === 201) {
               await db.offlineData.update(item.id, { status: 'synchronized' });
+              await db.offlineData.delete(item.id);
             }
           } catch (error) {
             console.error('Error syncing item:', error);
@@ -116,12 +118,15 @@ function App() {
   };
 
   const addToOfflineStorage = async (data) => {
-    await db.offlineData.add({ data, status: 'unsynchronized' });
-    // let dataNew =           {
-    //   "title": "Developersssss",
-    //   "author": "Author by developerssss"
-    // }
-    // await db.onlineDatabase.add({ dataNew, status: 'unsynchronized' });
+    const existingItem = await db.offlineData.where('receiptId').equals(data.receiptId).first();
+    if (!existingItem) {
+      // Data doesn't exist, add it to offline storage
+      await db.offlineData.add({ data: data, receiptId: data.receiptId, status: 'unsynchronized' });
+      console.log('Data added to offline storage');
+    } else {
+      console.log('Data already exists in offline storage');
+    }
+
   };
 
   return (
@@ -155,7 +160,8 @@ function App() {
         <button onClick={() => addToOfflineStorage(
           {
             "title": "Developer",
-            "author": "Author by developer"
+            "author": "Author by developer",
+            "receiptId": "4"
           }
         )} style={
           {
