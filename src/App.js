@@ -37,13 +37,13 @@ db.version(1).stores({
 
 
 function App() {
-  // const [online, setOnline] = useState(window.navigator.onLine);
-  const [online, setOnline] = useState(false);
+  const [online, setOnline] = useState(window.navigator.onLine);
+  // const [online, setOnline] = useState(false);
 
   useEffect(() => {
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
-    synchronizeData(); // Initial sync attempt when app loads
+    //synchronizeData(); // Initial sync attempt when app loads
     return () => {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
@@ -81,6 +81,7 @@ function App() {
 
       while (currentIndex < unsynchronizedData.length) {
         const batch = unsynchronizedData.slice(currentIndex, currentIndex + batchSize);
+        console.log(batch)
         const response = await sendToServerAPI(batch);
         for (const item of batch) {
           try {
@@ -89,7 +90,8 @@ function App() {
               await db.offlineData.update(item.id, { status: 'synchronized' });
               await db.offlineData.delete(item.id);
             }
-          } catch (error) {
+          } 
+          catch (error) {
             console.error('Error syncing item:', error);
             // Handle error or retry logic
           }
@@ -97,7 +99,8 @@ function App() {
         currentIndex += batchSize;
       }
       console.log("synchronizing end")
-    } catch (error) {
+    } 
+    catch (error) {
       console.error('Error getting unsynchronized data:', error);
     }
   };
@@ -118,9 +121,10 @@ function App() {
   };
 
   const addToOfflineStorage = async (data) => {
+    // await db.offlineData.add({ data: data, receiptId: data.receiptId, status: 'unsynchronized' });
+    
     const existingItem = await db.offlineData.where('receiptId').equals(data.receiptId).first();
     if (!existingItem) {
-      // Data doesn't exist, add it to offline storage
       await db.offlineData.add({ data: data, receiptId: data.receiptId, status: 'unsynchronized' });
       console.log('Data added to offline storage');
     } else {
@@ -161,7 +165,7 @@ function App() {
           {
             "title": "Developer",
             "author": "Author by developer",
-            "receiptId": "4"
+            "receiptId": "3"
           }
         )} style={
           {

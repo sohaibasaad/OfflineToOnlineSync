@@ -4,7 +4,39 @@
       "id": 1,
       "title": "json-server",
       "author": "typicode"
-    }
+    },
+    [
+      {
+        "data": {
+          "title": "Developer",
+          "author": "Author by developer",
+          "receiptId": "1"
+        },
+        "receiptId": "1",
+        "status": "unsynchronized",
+        "id": 42
+      },
+      {
+        "data": {
+          "title": "Developer",
+          "author": "Author by developer",
+          "receiptId": "2"
+        },
+        "receiptId": "2",
+        "status": "unsynchronized",
+        "id": 43
+      },
+      {
+        "data": {
+          "title": "Developer",
+          "author": "Author by developer",
+          "receiptId": "3"
+        },
+        "receiptId": "3",
+        "status": "unsynchronized",
+        "id": 44
+      }
+    ]
   ],
   "comments": [
     {
